@@ -31,7 +31,7 @@ class tickets_model extends Model
         return $this->hasMany(logs_model::class, 'id_ticket', 'id_ticket');
     }
 
-    public function user(): BelongsTo
+    public function users(): BelongsTo
     {
         return $this->belongsTo(User::class, 'id_user', 'id_user');
     }
