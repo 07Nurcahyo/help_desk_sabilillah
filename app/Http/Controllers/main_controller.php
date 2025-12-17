@@ -23,13 +23,39 @@ class main_controller extends Controller
         $users = User::all();
         $logs = logs_model::all();
         $user = Auth::user();
-        if ($user->role == 'guru' || $user->role == 'staf' || $user->role == 'siswa') {
+        $jumlahAdmin = User::where('role', 'admin')->count();
+        $jumlahGuru  = User::where('role', 'guru')->count();
+        $jumlahSiswa = User::where('role', 'siswa')->count();
+        $penggunaAktif = User::where('status', 'active')->count();
+        if (in_array($user->role, ['guru', 'staf', 'siswa'])) {
             $activeMenu = 'rekap_laporan';
-            return view('user/main', ['activeMenu' => $activeMenu, 'category' => $category, 'tickets' => $tickets, 'users' => $users, 'logs' => $logs]);
-        } else {
-            $activeMenu = 'dashboard';
-            return view('admin/main', ['activeMenu' => $activeMenu, 'category' => $category, 'tickets' => $tickets, 'users' => $users, 'logs' => $logs]);
+            return view('user/main', compact(
+                'activeMenu',
+                'category',
+                'tickets',
+                'users',
+                'logs'
+            ));
         }
+        $activeMenu = 'dashboard';
+        return view('admin/main', compact(
+            'activeMenu',
+            'category',
+            'tickets',
+            'users',
+            'logs',
+            'jumlahAdmin',
+            'jumlahGuru',
+            'jumlahSiswa',
+            'penggunaAktif'
+        ));
+        // if ($user->role == 'guru' || $user->role == 'staf' || $user->role == 'siswa') {
+        //     $activeMenu = 'rekap_laporan';
+        //     return view('user/main', ['activeMenu' => $activeMenu, 'category' => $category, 'tickets' => $tickets, 'users' => $users, 'logs' => $logs]);
+        // } else {
+        //     $activeMenu = 'dashboard';
+        //     return view('admin/main', ['activeMenu' => $activeMenu, 'category' => $category, 'tickets' => $tickets, 'users' => $users, 'logs' => $logs]);
+        // }
     }
 
     public function login() {

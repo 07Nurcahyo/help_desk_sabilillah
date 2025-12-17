@@ -25,7 +25,7 @@
         {{-- filter --}}
         <div class="col-md-7">
           <div class="form-group row">
-            <label class="pl-2 control-label col-form-label font-weight-normal">Filter Kategori : </label>
+            <label class="pl-2 control-label col-form-label font-weight-normal">Filter Status : </label>
             <div class="col-3">
               <select class="form-control" name="status" id="status" required>
                     <option value="">--Pilih Salah Satu--</option>
