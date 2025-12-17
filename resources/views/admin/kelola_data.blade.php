@@ -6,11 +6,8 @@
 
   <div class="card">
     <div class="card-header bg-navy">
-      <h2 class="card-title font-weight-bold" style="font-size: 22px">Kelola Laporan Masalah</h2>
+      <h2 class="card-title font-weight-bold" style="font-size: 22px">Kelola Laporan Masalah Keseluruhan</h2>
       <div class="card-tools">
-            <button class="btn btn-sm btn-success m-0 p-0 mr-3 p-1" data-toggle="modal" data-target="#tambahDataModal">
-                <i class="fas fa-plus"></i>  Tambah Data
-            </button>
             <button type="button" class="btn btn-tool" data-card-widget="collapse">
                 <i class="fas fa-minus"></i>
             </button>
@@ -53,68 +50,14 @@
               <th>Deskripsi</th>
               <th>Kategori</th> {{-- fk --}}
               <th>Lampiran</th>
+              <th>Status</th>
               <th>Aksi</th>
+              <th>Waktu</th>
             </tr>
           </thead>
         </table>
       </div>
     </div> <!-- /.card-body -->
-
-    {{-- modal tambah data --}}
-    <div class="modal fade" id="tambahDataModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <form id="" method="POST" action="{{ route('tambah_data_laporan') }}" enctype="multipart/form-data">
-                @csrf
-                <div class="modal-content">
-                    <div class="modal-header bg-navy">
-                        <h5 class="modal-title">Tambah Data Laporan</h5>
-                        <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-group row">
-                            <label class="col-sm-3 col-form-label">Username</label>
-                            <div class="col-sm-9">
-                                <input type="text" name="username" class="form-control" value="{{ auth()->user()->username }}" disabled>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-sm-3 col-form-label">Judul</label>
-                            <div class="col-sm-9">
-                                <input type="text" name="title" class="form-control" required>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-sm-3 col-form-label">Deskripsi</label>
-                            <div class="col-sm-9">
-                                {{-- <input type="text" name="description" class="form-control" required> --}}
-                                <textarea name="description" class="form-control" rows="4" required></textarea>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-sm-3 col-form-label">Kategori</label>
-                            <div class="col-sm-9">
-                                <select class="form-control" name="id_category" id="id_category" required>
-                                    <option value="">--Semua--</option>
-                                    @foreach($category as $item)
-                                    <option value="{{$item->id_category}}">{{$item->category_name}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-sm-3 col-form-label">Lampiran</label>
-                            <div class="col-sm-9">
-                                <input type="file" name="attachment" class="form-control">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-success"><i class="fas fa-save"></i>  Simpan</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
 
     {{-- modal edit data --}}
     <div class="modal fade" id="editDataModal" tabindex="-1" aria-hidden="true">
@@ -163,6 +106,17 @@
                             <label class="col-sm-3 col-form-label">Lampiran</label>
                             <div class="col-sm-9">
                                 <input id="attachment_edit" type="file" name="attachment" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Status</label>
+                            <div class="col-sm-9">
+                                <select class="form-control" name="status" id="status" required>
+                                    <option value="">--Pilih Salah Satu--</option>
+                                    <option value="baru">Baru</option>
+                                    <option value="proses">Proses</option>
+                                    <option value="selesai">Selesai</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -235,6 +189,39 @@
           className: "text-center",
           orderable: true,
           searchable: true
+        },
+        {
+            data: "status",
+            className: "text-center",
+            orderable: true,
+            searchable: true,
+            render: function (data) {
+                let badgeClass = '';
+
+                if (data === 'baru') {
+                    badgeClass = 'badge badge-primary';   // biru
+                } else if (data === 'proses') {
+                    badgeClass = 'badge badge-warning';   // kuning
+                } else if (data === 'selesai') {
+                    badgeClass = 'badge badge-success';   // hijau
+                } else {
+                    badgeClass = 'badge badge-secondary';
+                }
+
+                return `<span class="${badgeClass}">${data}</span>`;
+            }
+        },
+        {
+            data: "created_at",
+            className: "text-center",
+            orderable: true,
+            searchable: true,
+            render: function (data, type, row) {
+                if (!data) return '-';
+
+                // ambil tanggal saja (YYYY-MM-DD)
+                return data.substring(0, 10);
+            }
         },
         {
             data: "aksi",

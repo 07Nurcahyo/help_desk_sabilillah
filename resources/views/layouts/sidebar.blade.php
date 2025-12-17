@@ -15,40 +15,40 @@
 
           @if ( Auth::user()->role == 'admin' )
             <li class="nav-item">
-              <a href="#" class="nav-link">
-                <i class="nav-icon fas fa-users"></i>
-                <p>
-                  User
-                </p>
-              </a>
-            </li>
-
-            <li class="nav-item">
-              <a href="#" class="nav-link active">
+              <a href="{{ url('/admin') }}" class="nav-link {{ ($activeMenu == 'dashboard')? 'active' : '' }}">
                 <i class="nav-icon fas fa-tachometer-alt"></i>
                 <p>
                   Dashboard
                 </p>
               </a>
             </li>
+            <li class="nav-item">
+              <a href="{{ url('user/kelola_laporan_admin') }}" class="nav-link {{ ($activeMenu == 'kelola_laporan_admin')? 'active' : '' }}">
+                <i class="nav-icon fas fa-file-alt"></i>
+                <p>
+                  Kelola Laporan
+                </p>
+              </a>
+            </li>
+
+          @else
+            <li class="nav-item">
+              <a href="{{ url('/user') }}" class="nav-link {{ ($activeMenu == 'rekap_laporan')? 'active' : '' }}">
+                <i class="nav-icon fas fa-file-alt"></i>
+                <p>
+                  Rekap Laporan
+                </p>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a href="{{ url('user/kelola_laporan') }}" class="nav-link {{ ($activeMenu == 'kelola_laporan')? 'active' : '' }}">
+                <i class="nav-icon fas fa-tools"></i>    <p>
+                  Kelola Laporan
+                </p>
+              </a>
+            </li>
           @endif
-
-          <li class="nav-item">
-            <a href="{{ url('/user') }}" class="nav-link {{ ($activeMenu == 'rekap_laporan')? 'active' : '' }}">
-              <i class="nav-icon fas fa-file-alt"></i>
-              <p>
-                Rekap Laporan
-              </p>
-            </a>
-          </li>
-
-          <li class="nav-item">
-            <a href="{{ url('user/kelola_laporan') }}" class="nav-link {{ ($activeMenu == 'kelola_laporan')? 'active' : '' }}">
-              <i class="nav-icon fas fa-tools"></i>    <p>
-                Kelola Laporan
-              </p>
-            </a>
-          </li>
 
         </ul>
       </nav>

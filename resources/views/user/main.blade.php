@@ -45,6 +45,7 @@
               <th>Deskripsi</th>
               <th>Kategori</th> {{-- fk --}}
               <th>Lampiran</th>
+              <th>Status</th>
               <th>Catatan Admin</th>
               <th>Waktu</th>
             </tr>
@@ -116,6 +117,27 @@
           searchable: true
         },
         {
+          data: "status",
+          className: "text-center",
+          orderable: true,
+          searchable: true,
+          render: function (data) {
+              let badgeClass = '';
+
+              if (data === 'baru') {
+                  badgeClass = 'badge badge-primary';   // biru
+              } else if (data === 'proses') {
+                  badgeClass = 'badge badge-warning';   // kuning
+              } else if (data === 'selesai') {
+                  badgeClass = 'badge badge-success';   // hijau
+              } else {
+                  badgeClass = 'badge badge-primary';
+              }
+
+              return `<span class="${badgeClass}">${data}</span>`;
+          }
+        },
+        {
           data: "admin_note",
           className: "text-center",
           orderable: true,
@@ -125,7 +147,13 @@
           data: "created_at",
           className: "text-center",
           orderable: true,
-          searchable: true
+          searchable: true,
+          render: function (data, type, row) {
+              if (!data) return '-';
+
+              // ambil tanggal saja (YYYY-MM-DD)
+              return data.substring(0, 10);
+          }
         }
       ],
       buttons: [

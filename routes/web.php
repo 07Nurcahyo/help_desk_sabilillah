@@ -28,18 +28,20 @@ Route::group(['middleware' => ['auth']], function() {
         
         Route::group(['prefix' => 'user'], function() {
             Route::get('/', [main_controller::class, 'index']);
-            // Route::get('/dashboard', [main_controller::class, 'index']);
+            Route::get('/{id}/edit-json', [main_controller::class, 'edit_json']);
+            Route::put('/{id}', [main_controller::class, 'update_data_laporan'])->name('update_data_laporan');
 
             // Admin
+            Route::get('/kelola_laporan_admin', [main_controller::class, 'kelola_laporan_admin']);
+            Route::delete('/{id}', [main_controller::class, 'hapus_data_laporan'])->middleware('is_admin');
 
+            
             // User
             Route::get('/kelola_laporan', [main_controller::class, 'kelola_laporan']);
             Route::post('/tambah_data_laporan', [main_controller::class, 'tambah_data_laporan'])->name('tambah_data_laporan');
         });
 
         Route::get('/lihat_data_laporan', [main_controller::class, 'lihat_data_laporan']);
-        // Route::group(['prefix' => 'user'], function() {
-        // });
 
     });
 });

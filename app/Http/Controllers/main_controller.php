@@ -13,6 +13,7 @@ use Yajra\DataTables\DataTables;
 use Yajra\DataTables\Services\DataTable;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
 
 class main_controller extends Controller
 {
@@ -31,7 +32,7 @@ class main_controller extends Controller
         }
     }
 
-    public function login(){
+    public function login() {
         $user = Auth::user();
         // kondisi jika usernya ada
         // dd($user);
@@ -72,240 +73,109 @@ class main_controller extends Controller
         }
     }
 
-    // public function proses_login(Request $request)
-    // {
-    //     // Validasi input
-    //     $request->validate([
-    //         'username' => 'required',
-    //         'password' => 'required',
-    //     ]);
-
-    //     $username = $request->username;
-    //     $password = $request->password;
-
-    //     // Konfigurasi API
-    //     $apiUrl = 'https://test-api.sekolahsabilillah.sch.id/api.php';
-    //     $token  = '40f6c8e7fb3f22be8449ffd7980b85e74a0dd65a';
-
-    //     try {
-
-    //         $pegawaiResponse = Http::withHeaders([
-    //             'Authorization' => $token
-    //         ])->get($apiUrl, [
-    //             'endpoint' => 'data-pegawai'
-    //         ]);
-    //         // dd($pegawaiResponse);
-
-    //         $siswaResponse = Http::withHeaders([
-    //             'Authorization' => $token
-    //         ])->get($apiUrl, [
-    //             'endpoint' => 'data-siswa'
-    //         ]);
-
-    //         if (!$pegawaiResponse->successful() || !$siswaResponse->successful()) {
-    //             return response()->json([
-    //                 'status' => 'error',
-    //                 'message' => 'Gagal terhubung ke server autentikasi'
-    //             ], 500);
-    //         }
-
-    //         // Gabungkan data user
-    //         $users = collect($pegawaiResponse->json())
-    //             ->merge($siswaResponse->json());
-
-    //         // Cari user berdasarkan username
-    //         $user = $users->firstWhere('USERNAME', $username);
-
-    //         if (!$user) {
-    //             return response()->json([
-    //                 'status' => 'error',
-    //                 'message' => 'Username tidak ditemukan'
-    //             ], 401);
-    //         }
-
-    //         // Cek status aktif
-    //         if (isset($user['STATUS']) && $user['STATUS'] !== 'aktif') {
-    //             return response()->json([
-    //                 'status' => 'error',
-    //                 'message' => 'Akun tidak aktif'
-    //             ], 403);
-    //         }
-
-    //         // Verifikasi password (API hash dari "testProgrammer")
-    //         if (!Hash::check($password, $user['PASSWORD'])) {
-    //             return response()->json([
-    //                 'status' => 'error',
-    //                 'message' => 'Username atau Password salah'
-    //             ], 401);
-    //         }
-
-    //         /**
-    //          * 3. Simpan ke session
-    //          */
-    //         Session::put('login', true);
-    //         Session::put('username', $user['USERNAME']);
-    //         Session::put('role', $user['ROLE'] ?? 'siswa');
-    //         Session::put('user', $user);
-
-    //         // Response
-    //         if ($request->ajax()) {
-    //             return response()->json([
-    //                 'status' => 'success',
-    //                 'role' => $user['ROLE'] ?? 'siswa'
-    //             ]);
-    //         }
-
-    //         // Redirect berdasarkan role
-    //         if (($user['ROLE'] ?? '') === 'admin') {
-    //             return redirect()->route('admin.dashboard');
-    //         } elseif (($user['ROLE'] ?? '') === 'guru') {
-    //             return redirect()->route('guru.dashboard');
-    //         } else {
-    //             return redirect()->route('siswa.dashboard');
-    //         }
-
-    //     } catch (\Exception $e) {
-    //         return response()->json([
-    //             'status' => 'error',
-    //             'message' => 'Terjadi kesalahan sistem',
-    //             'error' => $e->getMessage()
-    //         ], 500);
-    //     }
-    // }
-
-    // public function proses_login(Request $request)
-    // {
-    //     $request->validate([
-    //         'username' => 'required',
-    //         'password' => 'required',
-    //     ]);
-
-    //     $username = $request->username;
-    //     $password = $request->password;
-
-    //     $apiUrl = 'https://test-api.sekolahsabilillah.sch.id/api.php';
-    //     $token  = '40f6c8e7fb3f22be8449ffd7980b85e74a0dd65a';
-
-    //     try {
-    //         // =====================
-    //         // DATA PEGAWAI
-    //         // =====================
-    //         $pegawaiResponse = Http::withHeaders([
-    //             'Authorization' => 'Bearer ' . $token,
-    //             'Accept' => 'application/json',
-    //         ])->get($apiUrl, [
-    //             'endpoint' => 'data-pegawai'
-    //         ]);
-    //         // dd($pegawaiResponse->json());
-
-    //         // =====================
-    //         // DATA SISWA
-    //         // =====================
-    //         $siswaResponse = Http::withHeaders([
-    //             'Authorization' => 'Bearer ' . $token,
-    //             'Accept' => 'application/json',
-    //         ])->get($apiUrl, [
-    //             'endpoint' => 'data-siswa'
-    //         ]);
-
-    //         if (!$pegawaiResponse->successful() || !$siswaResponse->successful()) {
-    //             return response()->json([
-    //                 'status' => 'error',
-    //                 'message' => 'Gagal menghubungi server autentikasi'
-    //             ], 500);
-    //         }
-
-    //         $users = collect($pegawaiResponse->json()['data'])
-    //         ->concat($siswaResponse->json()['data']);
-
-    //         // Cari user
-    //         $user = $users->firstWhere('USERNAME', $username);
-    //         // dd($username, $users, $user);
-
-    //         if (!$user) {
-    //             return response()->json([
-    //                 'status' => 'error',
-    //                 'message' => 'Username tidak ditemukan'
-    //             ], 401);
-    //         }
-
-    //         // Cek status
-    //         // dd($user['STATUS']);
-    //         if ($user['STATUS'] !== "1") {
-    //             return response()->json([
-    //                 'status' => 'error',
-    //                 'message' => 'Akun tidak aktif'
-    //             ], 403);
-    //         }
-
-    //         // Verifikasi password (hash dari API)
-    //         // if (!Hash::check($password, $user['PASSWORD'])) {
-    //         //     return response()->json([
-    //         //         'status' => 'error',
-    //         //         'message' => 'Username atau Password salah'
-    //         //     ], 401);
-    //         // }
-
-    //         // Simpan session
-    //         Session::put('is_login', true);
-    //         Session::put('username', $user['USERNAME']);
-    //         Session::put('role', $user['ROLE'] ?? 'siswa');
-    //         Session::put('user', $user);
-
-    //         if ($request->ajax()) {
-    //             return response()->json([
-    //                 'status' => 'success',
-    //                 'role' => $user['ROLE'] ?? 'siswa'
-    //             ]);
-    //         }
-
-    //         // Redirect by role
-    //         return match ($user['ROLE'] ?? 'siswa') {
-    //             'admin' => redirect()->intended('admin'),
-    //             'guru'  => redirect()->intended('admin'),
-    //             default => redirect()->intended('admin'),
-    //         };
-
-    //     } catch (\Exception $e) {
-    //         return response()->json([
-    //             'status' => 'error',
-    //             'message' => 'Terjadi kesalahan sistem',
-    //             'error' => $e->getMessage()
-    //         ], 500);
-    //     }
-    // }
-
-
-    public function logout(Request $request){
+    public function logout(Request $request) {
         // logout harus menghapus session
         $request->session()->flush();
         Auth::logout();
         return redirect('login_admin');
     }
 
-    // user
+    // User
+    // public function lihat_data_laporan(Request $request){
+    //     $data_laporan = tickets_model::select('id_ticket', 'id_user', 'title', 'description', 'id_category', 'attachment', 'admin_note', 'status', 'created_at')
+    //     ->with('users', 'category')
+    //     ->where('id_user', Auth::user()->id_user)
+    //     ;
+    //     // dd($data_laporan);
+    //     if ($request->id_category) {
+    //         $p = strval($request->id_category);
+    //         $data_laporan->where('id_category',$p);
+    //     } 
+    //     return DataTables::of($data_laporan)
+    //         ->addIndexColumn()
+    //         ->addColumn('aksi', function ($data_laporan) {
+
+    //             // tombol edit (boleh semua role)
+    //             $btn = '<button class="btn btn-warning btn-sm btn-edit"
+    //                     data-id="'.$data_laporan->id_ticket.'">
+    //                     <i class="fas fa-edit"></i></button> ';
+
+    //             // tombol delete hanya ADMIN
+    //             if (auth()->check() && auth()->user()->role === 'admin') {
+    //                 $btn .= '<form class="d-inline-block" method="POST"
+    //                         action="'.url('/user/'.$data_laporan->id_ticket).'"
+    //                         id="delete_'.$data_laporan->id_ticket.'">'
+    //                         . csrf_field()
+    //                         . method_field('DELETE') .
+    //                         '<button type="submit"
+    //                         class="btn btn-danger btn-sm"
+    //                         onclick="return deleteConfirm(\''.$data_laporan->id_ticket.'\');">
+    //                         <i class="fas fa-trash-alt"></i></button></form>';
+    //             }
+
+    //             return $btn;
+    //         })
+    //         ->rawColumns(['aksi']) // memberitahu bahwa kolom aksi adalah html
+    //         ->make(true);
+    // }
     public function lihat_data_laporan(Request $request){
-        $data_laporan = tickets_model::select('id_user', 'title', 'description', 'id_category', 'attachment', 'admin_note', 'created_at')
-        ->with('users', 'category')
-        ->where('id_user', Auth::user()->id_user)
-        ;
-        // dd($data_laporan);
+        $data_laporan = tickets_model::select(
+                'id_ticket',
+                'id_user',
+                'title',
+                'description',
+                'id_category',
+                'attachment',
+                'admin_note',
+                'status',
+                'created_at'
+            )
+            ->with('users', 'category');
+
+        // 🔐 jika bukan ADMIN, batasi hanya data miliknya
+        if (auth()->user()->role !== 'admin') {
+            $data_laporan->where('id_user', auth()->user()->id_user);
+        }
+
+        // filter kategori
         if ($request->id_category) {
-            // logger()->info('ID Provinsi: ' . $request->id_provinsi);
-            $p = strval($request->id_category);
-            $data_laporan->where('id_category',$p);
-        } 
+            $data_laporan->where('id_category', $request->id_category);
+        }
+
         return DataTables::of($data_laporan)
             ->addIndexColumn()
+            ->addColumn('aksi', function ($data_laporan) {
+
+                // tombol edit (semua role)
+                $btn = '<button class="btn btn-warning btn-sm btn-edit"
+                        data-id="'.$data_laporan->id_ticket.'">
+                        <i class="fas fa-edit"></i></button> ';
+
+                // tombol delete hanya ADMIN
+                if (auth()->check() && auth()->user()->role === 'admin') {
+                    $btn .= '<form class="d-inline-block" method="POST"
+                            action="'.url('/user/'.$data_laporan->id_ticket).'"
+                            id="delete_'.$data_laporan->id_ticket.'">'
+                            . csrf_field()
+                            . method_field('DELETE') .
+                            '<button type="submit"
+                            class="btn btn-danger btn-sm"
+                            onclick="return deleteConfirm(\''.$data_laporan->id_ticket.'\');">
+                            <i class="fas fa-trash-alt"></i></button></form>';
+                }
+
+                return $btn;
+            })
+            ->rawColumns(['aksi'])
             ->make(true);
     }
+
     public function kelola_laporan(){
         $activeMenu = 'kelola_laporan';
         $category = category_model::all();
         return view('user/create', ['category' => $category, 'activeMenu' => $activeMenu]);
     }
-    public function tambah_data_laporan(Request $request){
-        // dd($request->all());
+    public function tambah_data_laporan(Request $request) {
         $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
@@ -318,17 +188,80 @@ class main_controller extends Controller
         $ticket->title = $request->title;
         $ticket->description = $request->description;
         $ticket->id_category = $request->id_category;
+        $ticket->status = 'baru';
 
         if ($request->hasFile('attachment')) {
-            $file = $request->file('attachment');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('uploads/attachments'), $filename);
-            $ticket->attachment = $filename;
+            $path = $request->file('attachment')->store('attachments', 'public');
+            $ticket->attachment = $path; // contoh: attachments/file.png
         }
 
         $ticket->save();
 
-        return back()->with('success', 'Laporan berhasil ditambahkan.')->with('alert_timeout', 5000);
+        return back()
+            ->with('success', 'Laporan berhasil ditambahkan.')
+            ->with('alert_timeout', 5000);
     }
+    public function edit_json($id) {
+        $data = tickets_model::findOrFail($id);
+        return response()->json($data);
+    }
+    public function update_data_laporan(Request $request, $id) {
+        $data = tickets_model::findOrFail($id);
+
+        $data->id_user = $request->id_user;
+        $data->title = $request->title;
+        $data->description = $request->description;
+        $data->id_category = $request->id_category;
+        $data->status = $request->status ?? 'baru';
+
+        // ✅ kalau upload file baru
+        if ($request->hasFile('attachment')) {
+
+            // hapus file lama (jika ada)
+            if ($data->attachment && Storage::disk('public')->exists($data->attachment)) {
+                Storage::disk('public')->delete($data->attachment);
+            }
+
+            // simpan file baru
+            $path = $request->file('attachment')->store('attachments', 'public');
+            $data->attachment = $path;
+        }
+
+        $data->save();
+
+        return response()->json(['success' => true]);
+    }
+
+    // Admin
+    public function kelola_laporan_admin(){
+        $activeMenu = 'kelola_laporan_admin';
+        // $tickets = tickets_model::all();
+        // $data_laporan = tickets_model::select('id_ticket', 'id_user', 'title', 'description', 'id_category', 'attachment', 'admin_note', 'status', 'created_at')
+        // ->with('users', 'category')
+        // ->where('id_user', Auth::user()->id_user)
+        // ;
+        $category = category_model::all();
+        return view('admin/kelola_data', ['category' => $category, 'activeMenu' => $activeMenu]);
+    }
+
+    public function hapus_data_laporan($id) {
+        if (!auth()->check() || auth()->user()->role !== 'admin') {
+            abort(403, 'Anda tidak memiliki akses');
+        }
+
+        $data = tickets_model::findOrFail($id);
+
+        // hapus file kalau ada
+        if ($data->attachment && file_exists(storage_path('app/'.$data->attachment))) {
+            unlink(storage_path('app/'.$data->attachment));
+        }
+
+        $data->delete();
+
+        return redirect('/user/kelola_laporan_admin')
+            ->with('success', 'Data berhasil dihapus');
+    }
+
+
 
 }
