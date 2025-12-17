@@ -12,7 +12,7 @@
 
           @if ( Auth::user()->role == 'admin' )
             <li class="nav-item">
-              <a href="{{ url('/admin') }}" class="nav-link {{ ($activeMenu == 'dashboard')? 'active' : '' }}">
+              <a href="{{ url('/user') }}" class="nav-link {{ ($activeMenu == 'dashboard')? 'active' : '' }}">
                 <i class="nav-icon fas fa-tachometer-alt"></i>
                 <p>
                   Dashboard
