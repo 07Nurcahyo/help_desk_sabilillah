@@ -184,11 +184,28 @@
             searchable: true
         },
         {
-          
-          data: "attachment",
-          className: "text-center",
-          orderable: true,
-          searchable: true
+            data: "attachment",
+            className: "text-center",
+            orderable: false,
+            searchable: false,
+            render: function (data) {
+                if (!data) return '-';
+
+                let ext = data.split('.').pop().toLowerCase();
+                let url = `/storage/${data}`;
+
+                // gambar
+                if (['jpg','jpeg','png'].includes(ext)) {
+                    return `<img src="${url}"
+                            alt="attachment"
+                            style="max-width:80px; max-height:80px; border-radius:4px;">`;
+                }
+
+                // file lain
+                return `<a href="${url}" target="_blank">
+                        <i class="fas fa-file"></i> Download
+                        </a>`;
+            }
         },
         {
             data: "status",

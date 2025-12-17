@@ -189,7 +189,6 @@ class main_controller extends Controller
         $ticket->description = $request->description;
         $ticket->id_category = $request->id_category;
         $ticket->status = 'baru';
-
         if ($request->hasFile('attachment')) {
             $path = $request->file('attachment')->store('attachments', 'public');
             $ticket->attachment = $path; // contoh: attachments/file.png
@@ -201,6 +200,7 @@ class main_controller extends Controller
             ->with('success', 'Laporan berhasil ditambahkan.')
             ->with('alert_timeout', 5000);
     }
+
     public function edit_json($id) {
         $data = tickets_model::findOrFail($id);
         return response()->json($data);
@@ -213,8 +213,6 @@ class main_controller extends Controller
         $data->description = $request->description;
         $data->id_category = $request->id_category;
         $data->status = $request->status ?? 'baru';
-
-        // ✅ kalau upload file baru
         if ($request->hasFile('attachment')) {
 
             // hapus file lama (jika ada)
