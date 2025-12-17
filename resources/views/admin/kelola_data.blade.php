@@ -27,12 +27,12 @@
           <div class="form-group row">
             <label class="pl-2 control-label col-form-label font-weight-normal">Filter Kategori : </label>
             <div class="col-3">
-              <select class="form-control" name="id_category" id="id_category" required>
-                <option value="">--Semua--</option>
-                @foreach($category as $item)
-                  <option value="{{$item->id_category}}">{{$item->category_name}}</option>
-                @endforeach
-              </select>
+              <select class="form-control" name="status" id="status" required>
+                    <option value="">--Pilih Salah Satu--</option>
+                    <option value="baru">Baru</option>
+                    <option value="proses">Proses</option>
+                    <option value="selesai">Selesai</option>
+                </select>
             </div>
           </div>
         </div>
@@ -148,7 +148,8 @@
         dataType: "json",
         type: "GET",
         data: function(d) {
-          d.id_category = $('#id_category').val();
+        //   d.id_category = $('#id_category').val();
+        d.status = $('#status').val();
         }
       },
       columns: [
@@ -296,7 +297,10 @@
     });
     $('#id_category').on('change',function() {
       dataLaporan.ajax.reload();
-        });
+    });
+    $('#status').on('change', function () {
+        dataLaporan.ajax.reload();
+    });
     $('#buttons').html(dataLaporan.buttons().container());
 
 

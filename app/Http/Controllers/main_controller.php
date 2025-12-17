@@ -132,14 +132,19 @@ class main_controller extends Controller
             )
             ->with('users', 'category');
 
-        // 🔐 jika bukan ADMIN, batasi hanya data miliknya
         if (auth()->user()->role !== 'admin') {
             $data_laporan->where('id_user', auth()->user()->id_user);
         }
-
         // filter kategori
         if ($request->id_category) {
             $data_laporan->where('id_category', $request->id_category);
+        }
+        // filter status khusus admin
+        if (
+            auth()->user()->role === 'admin' &&
+            $request->filled('status')
+        ) {
+            $data_laporan->where('status', $request->status);
         }
 
         return DataTables::of($data_laporan)
