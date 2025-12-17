@@ -8,6 +8,7 @@ use App\Models\tickets_model;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Yajra\DataTables\DataTables;
 use Yajra\DataTables\Services\DataTable;
@@ -38,6 +39,20 @@ class main_controller extends Controller
             ));
         }
         $activeMenu = 'dashboard';
+
+        $laporanPerTanggal = tickets_model::select(
+            DB::raw('DATE(created_at) as tanggal'),
+            DB::raw('COUNT(*) as total')
+        )
+        ->groupBy('tanggal')
+        ->orderBy('tanggal', 'ASC')
+        ->get();
+        $laporanPerStatus = tickets_model::select(
+                'status',
+                DB::raw('COUNT(*) as total')
+            )
+            ->groupBy('status')
+            ->get();
         return view('admin/main', compact(
             'activeMenu',
             'category',
@@ -47,7 +62,9 @@ class main_controller extends Controller
             'jumlahAdmin',
             'jumlahGuru',
             'jumlahSiswa',
-            'penggunaAktif'
+            'penggunaAktif',
+            'laporanPerTanggal',
+            'laporanPerStatus'
         ));
         // if ($user->role == 'guru' || $user->role == 'staf' || $user->role == 'siswa') {
         //     $activeMenu = 'rekap_laporan';

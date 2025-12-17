@@ -2,88 +2,47 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-// use Illuminate\Support\Carbon;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class tickets_seeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
-    // public function run(): void
-    // {
-    //     $data = [
-    //         [
-    //             'id_user' => 1,
-    //             'title' => 'Masalah pada sistem login',
-    //             'description' => 'Saya tidak dapat masuk ke akun saya meskipun sudah memasukkan username dan password dengan benar.',
-    //             'id_category' => 2,
-    //             'attachment' => '',
-    //             'status' => 'open',
-    //             'admin_note' => '',
-    //         ],
-    //         [
-    //             'id_user' => 2,
-    //             'title' => 'Tidak bisa mengakses portal siswa',
-    //             'description' => 'Saya mengalami kesulitan saat mencoba mengakses portal siswa. Setiap kali saya masuk, muncul pesan error.',
-    //             'id_category' => 1,
-    //             'attachment' => '',
-    //             'status' => 'open',
-    //             'admin_note' => '',
-    //         ],
-    //         [
-    //             'id_user' => 3,
-    //             'title' => 'Permintaan penambahan fitur baru',
-    //             'description' => 'Saya ingin mengusulkan penambahan fitur baru pada sistem help desk untuk memudahkan pelaporan masalah.',
-    //             'id_category' => 2,
-    //             'attachment' => '',
-    //             'status' => 'open',
-    //             'admin_note' => '',
-    //         ]
-    //     ];
-    //     DB::table('tickets')->insert($data);
-    // }
-
-     public function run()
+    public function run()
     {
         $tickets = [];
-        $now = Carbon::now();
 
-        // daftar kategori (1–5)
+        $userIds   = DB::table('users')->pluck('id_user')->toArray();
         $categories = [1, 2, 3, 4, 5];
-        $catIndex = 0;
+        $statuses   = ['baru', 'proses', 'selesai'];
 
-        for ($userId = 1; $userId <= 20; $userId++) {
+        // loop 30 hari terakhir
+        for ($day = 29; $day >= 0; $day--) {
 
-            // laporan 1
-            $tickets[] = [
-                'id_user' => $userId,
-                'title' => 'Kendala sistem saat digunakan',
-                'description' => 'Sistem mengalami kendala saat digunakan, fitur tidak berjalan dengan normal dan menghambat aktivitas pengguna.',
-                'id_category' => $categories[$catIndex % 5],
-                'attachment' => null,
-                'admin_note' => null,
-                'created_at' => $now,
-            ];
-            $catIndex++;
+            $date = Carbon::now()->subDays($day);
 
-            // laporan 2
-            $tickets[] = [
-                'id_user' => $userId,
-                'title' => 'Gangguan perangkat / jaringan',
-                'description' => 'Terjadi gangguan pada perangkat atau koneksi jaringan sehingga aktivitas belajar atau kerja menjadi terganggu.',
-                'id_category' => $categories[$catIndex % 5],
-                'attachment' => null,
-                'admin_note' => null,
-                'created_at' => $now,
-            ];
-            $catIndex++;
+            // jumlah laporan per hari (biar naik turun)
+            $jumlahLaporan = rand(0, 5);
+
+            for ($i = 0; $i < $jumlahLaporan; $i++) {
+
+                $tickets[] = [
+                    'id_user'      => $userIds[array_rand($userIds)],
+                    'title'        => 'Laporan harian sistem',
+                    'description'  => 'Laporan otomatis untuk kebutuhan visualisasi grafik.',
+                    'id_category'  => $categories[array_rand($categories)],
+                    'attachment'   => null,
+                    'status'       => $statuses[array_rand($statuses)],
+                    'admin_note'   => null,
+                    'created_at'   => $date
+                                        ->copy()
+                                        ->addHours(rand(8, 17))
+                                        ->addMinutes(rand(0, 59)),
+                    'updated_at'   => $date,
+                ];
+            }
         }
 
         DB::table('tickets')->insert($tickets);
     }
-
 }
